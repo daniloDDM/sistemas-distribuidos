@@ -2,12 +2,17 @@ FROM python:3.13.7-alpine3.21
 
 WORKDIR /app
 
-RUN pip install grpcio grpcio-tools
+# Instala dependências
+RUN pip install --no-cache-dir grpcio grpcio-tools fastapi uvicorn
 
+# Copia proto
 COPY ./task_manager.proto .
 
+# Gera código gRPC a partir do .proto
 RUN python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. task_manager.proto
 
+# Copia cliente FastAPI
 COPY ./cliente.py .
 
-CMD ["python", "cliente.py"]
+# Comando para rodar FastAPI
+CMD ["uvicorn", "cliente:app", "--host", "0.0.0.0", "--port", "8000"]
