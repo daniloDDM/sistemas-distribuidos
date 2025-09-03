@@ -18,14 +18,36 @@ while True:
             tarefas[cont] = dados
             cont += 1
             reply = "OK"
+
         case "atualizar":
-            pass
+            id_tarefa = dados["id"]
+            if id_tarefa in tarefas:
+                tarefas[id_tarefa] = {
+                    "titulo": dados["titulo"],
+                    "desc": dados["desc"]
+                }
+                reply = "OK"
+            else:
+                reply = "ERRO: tarefa não encontrada"
+
         case "deletar":
-            pass
+            id_tarefa = dados["id"]
+            if id_tarefa in tarefas:
+                del tarefas[id_tarefa]
+                reply = "OK"
+            else:
+                reply = "ERRO: tarefa não encontrada"
+            
         case "listar":
-            pass
+            reply = str(tarefas)
+
         case "buscar":
-            pass
+            id_tarefa = dados["id"]
+            if id_tarefa in tarefas:
+                reply = str(tarefas[id_tarefa])
+            else:
+                reply = "ERRO: tarefa não encontrada"
+
         case _ :
             reply = "ERRO: função não encontrada"
 

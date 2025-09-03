@@ -25,13 +25,37 @@ while opcao != "sair":
                 print(reply, flush=True)
 
         case "atualizar":
-            pass
+            id_tarefa = int(input("ID da tarefa para atualizar: "))
+            titulo = input("Novo título: ")
+            descricao = input("Nova descrição: ")
+
+            request = {
+                "opcao": "atualizar",
+                "dados": {"id": id_tarefa, "titulo": titulo, "desc": descricao}
+            }
+            socket.send_json(request)
+            print(socket.recv_string(), flush=True)
+
         case "deletar":
-            pass
+            id_tarefa = int(input("ID da tarefa para deletar: "))
+            request = {
+                "opcao": "deletar",
+                "dados": {"id": id_tarefa}
+            }
+            socket.send_json(request)
+            print(socket.recv_string(), flush=True)
+
         case "listar":
-            pass
+            request = {"opcao": "listar", "dados": {}}
+            socket.send_json(request)
+            print(socket.recv_string(), flush=True)
+
         case "buscar":
-            pass
+            id_tarefa = int(input("ID da tarefa para buscar: "))
+            request = {"opcao": "buscar", "dados": {"id": id_tarefa}}
+            socket.send_json(request)
+            print(socket.recv_string(), flush=True)
+            
         case _:
             print("Opção não encontrada")
 
