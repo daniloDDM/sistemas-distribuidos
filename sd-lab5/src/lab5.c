@@ -7,7 +7,9 @@ int main(int argc, char** argv) {
     int rank, size;
     int *array_local, *array;
     int soma_local, soma;
-    int tamanho = 8;
+    // O tamanho do array foi alterado para 100.
+    // Agora, o mpirun pode ser executado com qualquer número de processos que seja divisor de 100 (ex: 2, 4, 5, 10, 20, 25, 50).
+    int tamanho = 100;
     int tamanho_local;
 
     MPI_Init(&argc, &argv);
@@ -22,11 +24,17 @@ int main(int argc, char** argv) {
         printf("Array: ");
         for (int i = 0; i < tamanho; i++) {
             array[i] = i + 1;
-            printf("%d ", array[i]);
+            if (i < 10) {
+                printf("%d ", array[i]);
+            } else if (i == 10) {
+                printf("... ");
+            }
         }
         printf("\n");
     }
 
+    // MPI_Scatter distribui o array principal do processo 0 em partes menores para todos os processos.
+    // Cada processo, incluindo o 0, recebe uma porção de 'tamanho_local' do array.
     MPI_Scatter(array, tamanho_local, MPI_INT, array_local, tamanho_local, MPI_INT, 0, MPI_COMM_WORLD);
 
     soma_local = 0;
@@ -37,11 +45,13 @@ int main(int argc, char** argv) {
     }
     printf("-- soma local: %4d\n", soma_local);
 
+    // MPI_Reduce coleta os valores de 'soma_local' de todos os processos e realiza uma operação (MPI_SUM) sobre eles.
+    // O resultado final é armazenado na variável 'soma' apenas no processo de rank 0.
     MPI_Reduce(&soma_local, &soma, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 
     if (rank == 0) {
         sleep(1);
-        printf("Soma do array: %d\n", soma);
+        printf("\nSoma total do array: %d\n", soma);
         printf("Valor esperado: %d\n", tamanho * (tamanho + 1) / 2);
         free(array);
     }
